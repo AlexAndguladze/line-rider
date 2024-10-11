@@ -12,4 +12,8 @@ function Point:draw()
    lg.circle("fill", self.x, self.y, 3)
 end
 
+function Point:get_position()
+   return self.x, self.y
+end
+
 return Point
