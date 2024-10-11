@@ -1,0 +1,5 @@
+dist/*
+defs/*
+.DS_Store
+desktop.ini
+/.vscode
