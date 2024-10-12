@@ -10,8 +10,8 @@ function Cart:init()
    self.body = love.physics.newBody(self.phy_world, self.x, self.y, "dynamic")
    self.shape = love.physics.newRectangleShape(self.w, self.h)
    self.fixture = love.physics.newFixture(self.body, self.shape)
-
-   self.fixture:setFriction(0.03)
+   self.body:setMass(2)
+   self.fixture:setFriction(0.02)
 end
 
 function Cart:draw()
