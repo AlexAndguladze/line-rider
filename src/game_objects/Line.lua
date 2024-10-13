@@ -31,9 +31,9 @@ function Line:init()
    local mid_y_new = mid_y + ((self.sensor_h /2) + extra_offest) * (self.x / mid_offset_magnitude) 
 
    local sensor_angle = math.atan2(self.y2 - self.y1, self.x2 - self.x1)
- 
+   print(sensor_angle)
    self.sensorBody = love.physics.newBody(self.phy_world, mid_x_new, mid_y_new, "static")
-   self.sensorShape = love.physics.newRectangleShape(0, 0, self.sensor_w, self.sensor_h, sensor_angle)
+   self.sensorShape = love.physics.newRectangleShape(0, 0, self.sensor_w, self.sensor_h)
    self.sensorFixture = love.physics.newFixture(self.sensorBody, self.sensorShape)
    self.sensorBody:setAngle(sensor_angle)
    self.sensorFixture:setSensor(true)
