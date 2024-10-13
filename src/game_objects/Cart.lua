@@ -12,6 +12,7 @@ function Cart:init()
    self.fixture = love.physics.newFixture(self.body, self.shape)
    self.body:setMass(2)
    self.fixture:setFriction(0.02)
+
 end
 
 function Cart:draw()
@@ -25,6 +26,7 @@ function Cart:draw()
    lg.rotate(angle)
    lg.rectangle("fill", -self.w / 2, -self.h /2, self.w, self.h)
    lg.pop()
+
 end
 
 return Cart

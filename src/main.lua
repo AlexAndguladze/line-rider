@@ -19,7 +19,8 @@ ground = {
 }
 local world
 col_categories = {
-   lines = 2
+   lines = 2,
+   line_sensors = 3,
 }
 deferred_sensor_changes = {}
 
@@ -29,7 +30,7 @@ function love.load(args)
    love.physics.setMeter(64)
    local PIXELS_PER_METER = 100
    world = love.physics.newWorld(0, 9.81 * PIXELS_PER_METER, true)
-   --world:setCallbacks(beginContact, endContact)
+   world:setCallbacks(beginContact)
 end
 
 -- set line from buffer
@@ -87,22 +88,23 @@ function when_mouse_down(_x, _y, buttom)
    end
 end
 
--- function beginContact(a, b, col)
---    local cat_a = a:getCategory()
---    local cat_b = b:getCategory()
+function beginContact(a, b, col)
+   local cat_a = a:getCategory()
+   local cat_b = b:getCategory()
+   print("Collision detected between categories: ", cat_a, cat_b)
 
---    if cat_a == 2 or cat_b == 2 then
---       local normal_x, normal_y = col:getNormal()
-
---       if normal_x > 0 then
---          if cat_a == col_categories.lines then
---             table.insert(deferred_sensor_changes, {fixture = a, sensorState = false})
---          elseif cat_b == col_categories.lines then
---             table.insert(deferred_sensor_changes, {fixture = b, sensorState = false})
---          end
---       end
---    end
--- end
+   if cat_a == 3 or cat_b == 3 then
+      local normal_x, normal_y = col:getNormal()
+      print(normal_x)
+      -- if normal_x > 0 then
+      --    if cat_a == col_categories.lines then
+      --       table.insert(deferred_sensor_changes, {fixture = a, sensorState = false})
+      --    elseif cat_b == col_categories.lines then
+      --       table.insert(deferred_sensor_changes, {fixture = b, sensorState = false})
+      --    end
+      -- end
+   end
+end
 
 -- function endContact(a, b, col)
 --    local cat_a = a:getCategory()
@@ -153,10 +155,13 @@ function love.draw()
       end
    end
 
-   lg.setColor(1, 1, 1)
-   lg.setLineWidth(5)
+   -- lg.setColor(1, 1, 1)
+   -- lg.setLineWidth(5)
+   -- for _, g in ipairs(ground) do
+   --     love.graphics.line(g.shape:getPoints())
+   -- end
    for _, g in ipairs(ground) do
-       love.graphics.line(g.shape:getPoints())
+      g:draw()
    end
 
    lg.setColor(1, 1, 1)
