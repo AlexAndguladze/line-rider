@@ -30,7 +30,7 @@ function love.load(args)
    love.physics.setMeter(64)
    local PIXELS_PER_METER = 100
    world = love.physics.newWorld(0, 9.81 * PIXELS_PER_METER, true)
-   world:setCallbacks(beginContact)
+   world:setCallbacks(beginContact, endContact)
 end
 
 -- set line from buffer
@@ -46,10 +46,6 @@ function set_lines()
          y2 = _y2,
          phy_world = world,
       })
-      -- line.body = love.physics.newBody(world, 0, 0, "static")
-      -- line.shape = love.physics.newEdgeShape(x1, y1, x2, y2)
-      -- line.fixture = love.physics.newFixture(line.body, line.shape)
-
       table.insert(ground, line)
    end
 end
@@ -91,39 +87,38 @@ end
 function beginContact(a, b, col)
    local cat_a = a:getCategory()
    local cat_b = b:getCategory()
-   print("Collision detected between categories: ", cat_a, cat_b)
+
 
    if cat_a == 3 or cat_b == 3 then
-      local normal_x, normal_y = col:getNormal()
-      print(normal_x)
-      -- if normal_x > 0 then
-      --    if cat_a == col_categories.lines then
-      --       table.insert(deferred_sensor_changes, {fixture = a, sensorState = false})
-      --    elseif cat_b == col_categories.lines then
-      --       table.insert(deferred_sensor_changes, {fixture = b, sensorState = false})
-      --    end
-      -- end
+      if cat_a == col_categories.line_sensors then
+         local data = a:getUserData()
+         table.insert(deferred_sensor_changes, {fixture = data.fixture, sensor_state = true})
+      elseif cat_b == col_categories.line_sensors then
+         local data = b:getUserData()
+         table.insert(deferred_sensor_changes, {fixture = data.fixture, sensor_state = true})
+      end
    end
 end
 
--- function endContact(a, b, col)
---    local cat_a = a:getCategory()
---    local cat_b = b:getCategory()
-
---    if cat_a == col_categories.lines or cat_b == col_categories.lines then
---       if cat_a == col_categories.lines then
---          table.insert(deferred_sensor_changes, {fixture = a, sensorState = true})
---       elseif cat_b == col_categories.lines then
---          table.insert(deferred_sensor_changes, {fixture = b, sensorState = true})
---       end
---    end
--- end
+function endContact(a, b, col)
+   local cat_a = a:getCategory()
+   local cat_b = b:getCategory()
+   if cat_a == 2 or cat_b == 2 then
+      if cat_a == col_categories.lines then
+         local data = a:getUserData()
+         table.insert(deferred_sensor_changes, {fixture = data.fixture, sensor_state = false})
+      elseif cat_b == col_categories.lines then
+         local data = b:getUserData()
+         table.insert(deferred_sensor_changes, {fixture = data.fixture, sensor_state = false})
+      end
+   end
+end
 
 function love.update(dt)
    world:update(dt)
 
    for i, change in ipairs(deferred_sensor_changes) do
-      change.fixture:setSensor(change.sensorState)
+      change.fixture:setSensor(change.sensor_state)
    end
    deferred_sensor_changes = {}
 
