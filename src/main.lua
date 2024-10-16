@@ -157,6 +157,7 @@ function love.draw()
    -- end
    for _, g in ipairs(ground) do
       g:draw()
+      g:debug()
    end
 
    lg.setColor(1, 1, 1)
