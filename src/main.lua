@@ -6,6 +6,7 @@ go_layer = Deep:new()
 
 Point = require("game_objects/Point")
 Line = require("game_objects/Line")
+Line_Accelerator = require("game_objects/Line_Accelerator")
 Cart = require("game_objects/Cart")
 game_objects = {
    
@@ -21,6 +22,7 @@ local world
 col_categories = {
    lines = 2,
    line_sensors = 3,
+   cart = 4,
 }
 deferred_sensor_changes = {}
 
@@ -39,7 +41,7 @@ function set_lines()
       local _x1, _y1 = points_buffer[i]:get_position()
       local _x2, _y2 = points_buffer[i + 1]:get_position()
 
-      local line = Line:new({
+      local line = Line_Accelerator:new({
          x1 = _x1,
          y1 = _y1,
          x2 = _x2,
@@ -98,6 +100,24 @@ function beginContact(a, b, col)
          table.insert(deferred_sensor_changes, {fixture = data.fixture, sensor_state = true})
       end
    end
+   --check for accelerator lines 
+   if cat_a == 4 or cat_b == 4 then
+      if cat_b == col_categories.lines then
+         local cart = a:getUserData()
+         if cart.accelerator_count then -- keep count of accelerator colliders currently touching
+         cart.accelerator_count = car.accelerator_count + 1
+         else 
+            cart.accelerator_count = 1
+         end
+      elseif cat_a == col_categories.lines then
+         local cart = b:getUserData()
+         if cart.accelerator_count then
+         cart.accelerator_count = cart.accelerator_count + 1
+         else 
+            cart.accelerator_count = 1
+         end
+      end
+   end
 end
 
 function endContact(a, b, col)
@@ -110,6 +130,25 @@ function endContact(a, b, col)
       elseif cat_b == col_categories.lines then
          local data = b:getUserData()
          table.insert(deferred_sensor_changes, {fixture = data.fixture, sensor_state = false})
+      end
+   end
+
+   -- decrease accelerator count currently colliding
+   if cat_a == 4 or cat_b == 4 then
+      if cat_b == col_categories.lines then
+         local cart = a:getUserData()
+         if cart.accelerator_count then -- keep count of accelerator colliders currently touching
+         cart.accelerator_count = car.accelerator_count - 1
+         else 
+            cart.accelerator_count = 0
+         end
+      elseif cat_a == col_categories.lines then
+         local cart = b:getUserData()
+         if cart.accelerator_count then
+         cart.accelerator_count = cart.accelerator_count - 1
+         else 
+            cart.accelerator_count = 0
+         end
       end
    end
 end

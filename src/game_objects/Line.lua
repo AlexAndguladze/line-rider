@@ -8,6 +8,7 @@ local Line = Class:extend({
    sensor_w = 5,
    sensor_h = 5,
    phy_world = nil,
+   line_type = "normal",
 })
 local sensor_extra_offset = 3
 function Line:init()
@@ -18,6 +19,10 @@ function Line:init()
    self.fixture:setCategory(col_categories.lines)
    self.fixture:setMask(col_categories.lines)
    self.fixture:setSensor(false)
+   
+   self:init_sensor()
+end
+function Line:init_sensor()
    self.sensor_h = 30
    self.x = self.x2 - self.x1
    self.y = self.y2 - self.y1

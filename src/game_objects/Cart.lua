@@ -4,6 +4,7 @@ local Cart = Class:extend({
    w = 64,
    h = 30,
    phy_world = nil,
+   accelerator_count = 0,
 })
 
 function Cart:init()
@@ -12,7 +13,15 @@ function Cart:init()
    self.fixture = love.physics.newFixture(self.body, self.shape)
    self.body:setMass(2)
    self.fixture:setFriction(0.02)
+   self.fixture:setCategory(col_categories.cart)
+   self.fixture:setUserData(self)
 
+end
+
+function Cart:update(dt)
+   if self.accelerator_count > 0 then
+      self.body:applyForce(1000, 0)
+   end
 end
 
 function Cart:draw()
