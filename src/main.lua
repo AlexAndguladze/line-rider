@@ -27,6 +27,11 @@ col_categories = {
 deferred_sensor_changes = {}
 
 local draw_threshold = 15
+local draw_line_category = {
+   normal = 1,
+   accelerator = 2,
+}
+local current_draw_line = 1
 
 function love.load(args)
    love.physics.setMeter(64)
@@ -41,14 +46,26 @@ function set_lines()
       local _x1, _y1 = points_buffer[i]:get_position()
       local _x2, _y2 = points_buffer[i + 1]:get_position()
 
-      local line = Line_Accelerator:new({
-         x1 = _x1,
-         y1 = _y1,
-         x2 = _x2,
-         y2 = _y2,
-         phy_world = world,
-      })
-      table.insert(ground, line)
+      if current_draw_line == draw_line_category.normal then
+         local line = Line:new({
+            x1 = _x1,
+            y1 = _y1,
+            x2 = _x2,
+            y2 = _y2,
+            phy_world = world,
+         })
+         table.insert(ground, line)
+      elseif current_draw_line == draw_line_category.accelerator then
+         print("accel setting")
+         local line = Line_Accelerator:new({
+            x1 = _x1,
+            y1 = _y1,
+            x2 = _x2,
+            y2 = _y2,
+            phy_world = world,
+         })
+         table.insert(ground, line)
+      end
    end
 end
 
