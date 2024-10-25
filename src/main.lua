@@ -8,6 +8,9 @@ Point = require("game_objects/Point")
 Line = require("game_objects/Line")
 Line_Accelerator = require("game_objects/Line_Accelerator")
 Cart = require("game_objects/Cart")
+Camera = require("game_objects/Camera")
+
+local main_camera
 game_objects = {
    
 }
@@ -38,6 +41,7 @@ function love.load(args)
    local PIXELS_PER_METER = 100
    world = love.physics.newWorld(0, 9.81 * PIXELS_PER_METER, true)
    world:setCallbacks(beginContact, endContact)
+   main_camera = Camera:new()
 end
 
 -- set line from buffer
@@ -56,7 +60,6 @@ function set_lines()
          })
          table.insert(ground, line)
       elseif current_draw_line == draw_line_category.accelerator then
-         print("accel setting")
          local line = Line_Accelerator:new({
             x1 = _x1,
             y1 = _y1,
@@ -77,14 +80,20 @@ function love.mousepressed(_x, _y, button)
    elseif button == 2 then
       local cart = Cart:new({x = _x, y = _y, phy_world = world})
       table.insert(game_objects, cart)
+   elseif button == 3 then
+      main_camera:start_drag(_x, _y)
    end
+
 end
 
 function love.mousereleased(_x, _y, button)
-   if #points_buffer > 1 then
+   if button == 1 and #points_buffer > 1 then
       set_lines()
+      points_buffer = {}
    end
-   points_buffer = {}
+   if button == 3 then
+      main_camera:end_drag()
+   end
 end
 
 function distance_between(x1, y1, x2, y2)
@@ -108,7 +117,7 @@ function beginContact(a, b, col)
    local cat_b = b:getCategory()
 
 
-   if cat_a == 3 or cat_b == 3 then
+   if cat_a == col_categories.line_sensors or cat_b == col_categories.line_sensors then
       if cat_a == col_categories.line_sensors then
          local data = a:getUserData()
          table.insert(deferred_sensor_changes, {fixture = data.fixture, sensor_state = true})
@@ -118,15 +127,15 @@ function beginContact(a, b, col)
       end
    end
    --check for accelerator lines 
-   if cat_a == 4 or cat_b == 4 then
-      if cat_b == col_categories.lines then
+   if cat_a == col_categories.cart or cat_b == col_categories.cart then
+      if cat_b == col_categories.lines and b:getUserData().line_type == "accelerator" then
          local cart = a:getUserData()
          if cart.accelerator_count then -- keep count of accelerator colliders currently touching
          cart.accelerator_count = car.accelerator_count + 1
          else 
             cart.accelerator_count = 1
          end
-      elseif cat_a == col_categories.lines then
+      elseif cat_a == col_categories.lines and a:getUserData().line_type == "accelerator" then
          local cart = b:getUserData()
          if cart.accelerator_count then
          cart.accelerator_count = cart.accelerator_count + 1
@@ -140,11 +149,11 @@ end
 function endContact(a, b, col)
    local cat_a = a:getCategory()
    local cat_b = b:getCategory()
-   if cat_a == 2 or cat_b == 2 then
-      if cat_a == col_categories.lines then
+   if cat_a == col_categories.line_sensors or cat_b == col_categories.line_sensors then
+      if cat_a == col_categories.line_sensors then
          local data = a:getUserData()
          table.insert(deferred_sensor_changes, {fixture = data.fixture, sensor_state = false})
-      elseif cat_b == col_categories.lines then
+      elseif cat_b == col_categories.line_sensors then
          local data = b:getUserData()
          table.insert(deferred_sensor_changes, {fixture = data.fixture, sensor_state = false})
       end
@@ -172,6 +181,7 @@ end
 
 function love.update(dt)
    world:update(dt)
+   main_camera:update(dt)
 
    for i, change in ipairs(deferred_sensor_changes) do
       change.fixture:setSensor(change.sensor_state)
@@ -189,6 +199,8 @@ function love.update(dt)
 end
 
 function love.draw()
+   lg.push()
+   lg.translate(main_camera.x, main_camera.y)
    lg.setColor(1, 1, 1, 1)
 
    for _, obj in pairs(game_objects) do
@@ -205,7 +217,7 @@ function love.draw()
          end
       end
    end
-
+    --camera drag end
    -- lg.setColor(1, 1, 1)
    -- lg.setLineWidth(5)
    -- for _, g in ipairs(ground) do
@@ -215,11 +227,11 @@ function love.draw()
       g:draw()
       g:debug()
    end
-
+   lg.pop()
    lg.setColor(1, 1, 1)
    local line_count = "lines:"..#ground
    lg.print(line_count, 10, 10)
 
-
+   
    go_layer:draw()
 end

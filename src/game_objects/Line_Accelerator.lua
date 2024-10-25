@@ -4,7 +4,11 @@ local Line_Accelerator = Line:extend({
    line_type = "accelerator"
 })
 
-function Line:draw()
+function Line_Accelerator:init()
+   Line.init(self)
+end
+
+function Line_Accelerator:draw()
    lg.setColor(1, 0, 1, 1)
    -- if self.fixture:isSensor() then
    --    lg.setColor(1, 1, 1, 0.2)

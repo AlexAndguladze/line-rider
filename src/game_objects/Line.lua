@@ -10,6 +10,8 @@ local Line = Class:extend({
    phy_world = nil,
    line_type = "normal",
 })
+--line color
+--local l_c = {r = 1, g = 1, b = 1, a = 1}
 local sensor_extra_offset = 3
 function Line:init()
    self.body = love.physics.newBody(self.phy_world, 0, 0, "static")
@@ -54,9 +56,9 @@ end
 
 function Line:draw()
    lg.setColor(1, 1, 1, 1)
-   -- if self.fixture:isSensor() then
-   --    lg.setColor(1, 1, 1, 0.2)
-   -- end
+   if self.fixture:isSensor() then
+      lg.setColor(1, 1, 1, 0.2)
+   end
    lg.setLineWidth(4)
    lg.line(self.x1, self.y1, self.x2, self.y2)
 end
