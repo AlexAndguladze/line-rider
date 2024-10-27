@@ -71,14 +71,24 @@ function set_lines()
       end
    end
 end
+function convert_to_world_coordinates(x, y)
+   local cam_x, cam_y = main_camera:get_offset()
+   local adjusted_x, adjusted_y = x + cam_x, y + cam_y
+   adjusted_x = adjusted_x / main_camera.zoom
+   adjusted_y = adjusted_y / main_camera.zoom
+   return adjusted_x, adjusted_y
+end
 
 function love.mousepressed(_x, _y, button)
+   --Add first point in line buffer
    if button == 1 then
       points_buffer = {}
-      local point = Point:new({x = _x, y = _y})
+      local world_x, world_y = convert_to_world_coordinates(_x, _y)
+      local point = Point:new({x = world_x, y = world_y})
       table.insert(points_buffer, point)
    elseif button == 2 then
-      local cart = Cart:new({x = _x, y = _y, phy_world = world})
+      local world_x, world_y = convert_to_world_coordinates(_x, _y)
+      local cart = Cart:new({x = world_x, y = world_y, phy_world = world})
       table.insert(game_objects, cart)
    elseif button == 3 then
       main_camera:start_drag(_x, _y)
@@ -96,6 +106,16 @@ function love.mousereleased(_x, _y, button)
    end
 end
 
+function love.wheelmoved(x, y)
+   local zoom_speed = 0.1
+   if y > 0 then 
+      main_camera.zoom = main_camera.zoom + zoom_speed
+   elseif y < 0 then
+      main_camera.zoom = main_camera.zoom - zoom_speed
+   end
+   main_camera.zoom = math.max(0.1, math.min(main_camera.zoom, 5))
+end
+
 function distance_between(x1, y1, x2, y2)
    return math.sqrt((x2 - x1)^2 + (y2 - y1)^2)
 end
@@ -103,10 +123,12 @@ end
 
 function when_mouse_down(_x, _y, buttom)
    if #points_buffer > 0 then
+      local world_x, world_y = convert_to_world_coordinates(_x, _y)
       local latest_point = points_buffer[#points_buffer]
-      local distance = distance_between(_x, _y, latest_point.x, latest_point.y)
+      
+      local distance = distance_between(world_x, world_y, latest_point.x, latest_point.y)
       if distance > draw_threshold then
-         local point = Point:new({x = _x, y = _y})
+         local point = Point:new({x = world_x, y = world_y})
          table.insert(points_buffer, point)
       end
    end
@@ -201,6 +223,7 @@ end
 function love.draw()
    lg.push()
    lg.translate(main_camera.x, main_camera.y)
+   lg.scale(main_camera.zoom, main_camera.zoom)
    lg.setColor(1, 1, 1, 1)
 
    for _, obj in pairs(game_objects) do
