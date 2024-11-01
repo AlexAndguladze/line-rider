@@ -4,6 +4,7 @@ local Camera = Class:extend({
    is_drag = false,
    drag_start = {x = 0, y = 0},
    zoom = 1,
+   zoom_unit = 0.1,
 })
 
 function Camera:start_drag(x, y)
@@ -25,6 +26,14 @@ function Camera:update(dt)
 end
 function Camera:get_offset()
    return -self.x, -self.y
+end
+
+function Camera:set_zoom_offset(sign)
+   local mouse_x, mouse_y = love.mouse.getPosition();
+   self.x = self.x + mouse_x * self.zoom_unit * sign
+   self.y = self.y + mouse_y * self.zoom_unit * sign
+   print(mouse_x * self.zoom_unit * sign)
+   
 end
 
 function Camera:draw()
