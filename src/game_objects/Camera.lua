@@ -29,15 +29,19 @@ function Camera:get_offset()
 end
 
 function Camera:set_zoom_offset(sign)
-   local mouse_x, mouse_y = love.mouse.getPosition();
-   self.x = self.x + mouse_x * self.zoom_unit * sign
-   self.y = self.y + mouse_y * self.zoom_unit * sign
-   print(mouse_x * self.zoom_unit * sign)
+   local mouse_x, mouse_y = love.mouse.getPosition()
    
+   local world_x = (mouse_x - self.x) / self.zoom
+   local world_y = (mouse_y - self.y) / self.zoom
+
+   self.zoom = self.zoom + sign * self.zoom_unit
+   self.zoom = math.max(0.1, math.min(self.zoom, 5))
+
+   self.x = mouse_x - world_x * self.zoom
+   self.y = mouse_y - world_y * self.zoom
 end
 
 function Camera:draw()
-   print(self.x .. " " .. self.y)
    lg.push()
    lg.translate(-self.x, -self.y)
    lg.pop()

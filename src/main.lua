@@ -109,13 +109,10 @@ end
 function love.wheelmoved(x, y)
    local zoom_speed = main_camera.zoom_unit
    if y > 0 then 
-      main_camera.zoom = main_camera.zoom + zoom_speed
-      main_camera:set_zoom_offset(-1)
-   elseif y < 0 then
-      main_camera.zoom = main_camera.zoom - zoom_speed
       main_camera:set_zoom_offset(1)
+   elseif y < 0 then
+      main_camera:set_zoom_offset(-1)
    end
-   main_camera.zoom = math.max(0.1, math.min(main_camera.zoom, 5))
 end
 
 function distance_between(x1, y1, x2, y2)
@@ -253,11 +250,6 @@ function love.draw()
       --g:debug()
    end
    lg.pop()
-   lg.setColor(1, 1, 1)
-   local mx, my = love.mouse.getPosition() 
-   lg.print(mx .. " " .. my, 10, 30)
-   lg.print(main_camera.x .. " " .. main_camera.y)
-
    
    go_layer:draw()
 end
