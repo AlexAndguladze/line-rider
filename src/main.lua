@@ -9,6 +9,37 @@ Line = require("game_objects/Line")
 Line_Accelerator = require("game_objects/Line_Accelerator")
 Cart = require("game_objects/Cart")
 Camera = require("game_objects/Camera")
+Buttons_Panel = require("ui_elements/Buttons_Panel")
+Button = require("ui_elements/Button")
+
+
+local button_1 = Button:new({
+   w=20,
+   h=20,
+})
+local button_2 = Button:new({
+   w=50,
+   h=20,
+})
+local button_3 = Button:new({
+   w=20,
+   h=20,
+})
+local button_4 = Button:new({
+   w=20,
+   h=20,
+})
+local button_5 = Button:new({
+   w=20,
+   h=20,
+})
+local top_panel = Buttons_Panel:new({
+   x = 50,
+   y = 10,
+   w = 300,
+   h = 80,
+   buttons = {button_1, button_2, button_3,button_4, button_5, button_6 },
+})
 
 local main_camera
 game_objects = {
@@ -34,7 +65,7 @@ local draw_line_category = {
    normal = 1,
    accelerator = 2,
 }
-local current_draw_line = 1
+local current_draw_line = 2
 
 function love.load(args)
    love.physics.setMeter(64)
@@ -217,6 +248,8 @@ function love.update(dt)
    for _, obj in pairs(game_objects) do
       if obj.update then obj:update(dt) end
    end
+
+   top_panel:update()
 end
 
 function love.draw()
@@ -250,6 +283,9 @@ function love.draw()
       --g:debug()
    end
    lg.pop()
+
+   top_panel:draw()
+   
    
    go_layer:draw()
 end
