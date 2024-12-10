@@ -14,30 +14,30 @@ Button = require("ui_elements/Button")
 
 
 local button_1 = Button:new({
-   w=20,
-   h=20,
+   w=50,
+   h=50,
 })
 local button_2 = Button:new({
    w=50,
-   h=20,
+   h=50,
 })
 local button_3 = Button:new({
-   w=20,
-   h=20,
+   w=50,
+   h=50,
 })
 local button_4 = Button:new({
-   w=20,
-   h=20,
+   w=50,
+   h=50,
 })
 local button_5 = Button:new({
-   w=20,
-   h=20,
+   w=50,
+   h=50,
 })
 local top_panel = Buttons_Panel:new({
    x = 50,
    y = 10,
    w = 300,
-   h = 80,
+   h = 70,
    buttons = {button_1, button_2, button_3,button_4, button_5, button_6 },
 })
 

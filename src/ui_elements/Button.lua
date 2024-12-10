@@ -4,6 +4,8 @@ local Button = Class:extend({
    w = 10,
    h = 10,
    
+   mouse_btn = 1,
+   is_down = false,
 })
 function Button:is_hovered()
    local mx, my = love.mouse.getPosition()
@@ -11,14 +13,24 @@ function Button:is_hovered()
 end
 
 function Button:update()
-   if love.mouse.isDown(1) and self:is_hovered() then
-      self:on_click()
+   -- button click once
+   if self.is_down == false and love.mouse.isDown(self.mouse_btn) and self:is_hovered() then
+      self.is_down = true
+   elseif self.is_down == true and not love.mouse.isDown(self.mouse_btn) then
+      self.is_down = false
+      if self:is_hovered() then -- not call if mouse moved away
+         self:on_click()
+      end
    end
+   
 end
 
 function Button:on_click()
- print("Clicked")
+   print("Clicked once")
 end
+-- function Button:on_mouse_down()
+--    print("Click continuously")
+-- end
 
 function Button:draw()
    lg.setColor(1, 0.5, 1)
