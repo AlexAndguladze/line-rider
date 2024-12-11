@@ -9,8 +9,10 @@ local Button = Class:extend({
    is_down = false,
 })
 
-function Button:is_hovered()
-   local mx, my = love.mouse.getPosition()
+function Button:is_hovered(mx, my)
+   if x == nil and y == nil then
+      mx, my = love.mouse.getPosition()
+   end
    return mx >= self.x and mx < self.x + self.w and my >= self.y and my < self.y + self.h
 end
 
