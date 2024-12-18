@@ -1,6 +1,7 @@
 local Buttons_Panel = Class:extend({
    x = 0,
    y = 0,
+   z = 0,
    w = 0,
    h = 0,
    buttons = {},
@@ -11,17 +12,24 @@ function Buttons_Panel:init()
    self:align_buttons()
 end
 
-function Buttons_Panel:update()
-   for i, btn in ipairs(self.buttons) do
-      btn:update()
+function Buttons_Panel:is_hovered(mx, my)
+   if x == nil and y == nil then
+      mx, my = love.mouse.getPosition()
    end
+   return mx >= self.x and mx < self.x + self.w and my >= self.y and my < self.y + self.h
+end
+
+function Buttons_Panel:update()
+   -- for i, btn in ipairs(self.buttons) do
+   --    btn:update()
+   -- end
 end
 
 function Buttons_Panel:draw()
-   lg.setColor(1,1,1)
+   lg.setColor(1, 1, 1, 1)
    lg.rectangle("fill", self.x, self.y, self.w, self.h)
   
-   self:draw_buttons()
+   --self:draw_buttons()
 end
 
 function Buttons_Panel:align_buttons()
@@ -40,10 +48,10 @@ function Buttons_Panel:align_buttons()
    end
 end
 
-function Buttons_Panel:draw_buttons()
-   for i, btn in ipairs(self.buttons) do
-      btn:draw()
-   end
-end
+-- function Buttons_Panel:draw_buttons()
+--    for i, btn in ipairs(self.buttons) do
+--       btn:draw()
+--    end
+-- end
 
 return Buttons_Panel

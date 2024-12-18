@@ -1,12 +1,14 @@
 local Button = Class:extend({
    x = 0,
    y = 0,
+   z = 0,
    w = 10,
    h = 10,
    on_click = nil,
    on_mouse_down = nil,
    mouse_btn = 1,
    is_down = false,
+   name = "",
 })
 
 function Button:is_hovered(mx, my)

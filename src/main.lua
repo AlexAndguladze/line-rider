@@ -12,34 +12,7 @@ Camera = require("game_objects/Camera")
 Buttons_Panel = require("ui_elements/Buttons_Panel")
 Button = require("ui_elements/Button")
 
-
-local button_1 = Button:new({
-   w=50,
-   h=50,
-})
-local button_2 = Button:new({
-   w=50,
-   h=50,
-})
-local button_3 = Button:new({
-   w=50,
-   h=50,
-})
-local button_4 = Button:new({
-   w=50,
-   h=50,
-})
-local button_5 = Button:new({
-   w=50,
-   h=50,
-})
-local top_panel = Buttons_Panel:new({
-   x = 50,
-   y = 10,
-   w = 300,
-   h = 70,
-   buttons = {button_1, button_2, button_3,button_4, button_5, button_6 },
-})
+local ui_manager = require("ui_initializations")
 
 local main_camera
 game_objects = {
@@ -111,6 +84,9 @@ function convert_to_world_coordinates(x, y)
 end
 
 function love.mousepressed(_x, _y, button)
+   if ui_manager:is_cursor_hovering_any() then
+      return
+   end
    --Add first point in line buffer
    if button == 1 then
       points_buffer = {}
@@ -249,7 +225,7 @@ function love.update(dt)
       if obj.update then obj:update(dt) end
    end
 
-   top_panel:update()
+   ui_manager:update()
 end
 
 function love.draw()
@@ -284,8 +260,8 @@ function love.draw()
    end
    lg.pop()
 
-   top_panel:draw()
-   
+   ui_manager:draw()
+
    
    go_layer:draw()
 end
