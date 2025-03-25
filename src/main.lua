@@ -225,7 +225,7 @@ function love.update(dt)
       if obj.update then obj:update(dt) end
    end
 
-   ui_manager:update()
+   ui_manager:update(dt)
 end
 
 function love.draw()

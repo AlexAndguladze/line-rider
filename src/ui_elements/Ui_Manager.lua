@@ -6,9 +6,9 @@ function Ui_Manager:init()
    self:sort_by_z()
 end
 
-function Ui_Manager:update()
+function Ui_Manager:update(dt)
    for _, element in ipairs(self.elements) do
-      element:update()
+      element:update(dt)
    end
 end
 

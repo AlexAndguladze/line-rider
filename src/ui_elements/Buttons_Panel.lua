@@ -26,7 +26,7 @@ function Buttons_Panel:update()
 end
 
 function Buttons_Panel:draw()
-   lg.setColor(1, 1, 1, 1)
+   lg.setColor(1, 0.8, 1, 1)
    lg.rectangle("fill", self.x, self.y, self.w, self.h)
   
    --self:draw_buttons()

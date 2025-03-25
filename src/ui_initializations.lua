@@ -6,40 +6,56 @@ local ui_manager = Ui_Manager:new({
    elements = {}
 })
 
-local button_1 = Button:new({
+function resize_on_hover(btn, dt)
+   --reach button parameters
+   local speed = 10
+   btn.w = btn.w + (55 - btn.w) * speed * dt
+   btn.h = btn.h + (55 - btn.h) * speed * dt
+
+
+   local scale_x = btn.w / 50
+   local scale_y = btn.h / 50
+   btn.sprite:scale(scale_x) 
+end
+
+local draw_btn = Button:new({
    w=50,
    h=50,
+   sprite = Sprite:new({
+      src = lg.newImage("assets/img/ui_brush_btn.png"),
+      origin = "cc"
+   }),
+   name = "draw_normal",
+   on_hover = function(self, dt) 
+      self.sprite:set_origin(self.w/2, self.h/2)
+      resize_on_hover(self, dt) 
+   end,
 })
-local button_2 = Button:new({
+local draw_accelerator_btn = Button:new({
    w=50,
    h=50,
+   sprite = Sprite:new({
+      src = lg.newImage("assets/img/ui_accelerator_btn.png"),
+      origin ="cc"
+   }),
+   name = "draw_accelerator",
+   on_hover = function(self, dt) 
+      self.sprite:set_origin(self.w/2, self.h/2)
+      resize_on_hover(self, dt) 
+   end,
 })
-local button_3 = Button:new({
-   w=50,
-   h=50,
-})
-local button_4 = Button:new({
-   w=50,
-   h=50,
-})
-local button_5 = Button:new({
-   w=50,
-   h=50,
-})
+
 local top_panel = Buttons_Panel:new({
    x = 50,
    y = 10,
    z =  -10,
    w = 300,
    h = 70,
-   buttons = {button_1, button_2, button_3,button_4, button_5 },
+   buttons = {draw_btn,draw_accelerator_btn},
 })
 
-ui_manager:add_element(button_1)
-ui_manager:add_element(button_2)
-ui_manager:add_element(button_3)
-ui_manager:add_element(button_4)
-ui_manager:add_element(button_5)
+ui_manager:add_element(draw_btn)
+ui_manager:add_element(draw_accelerator_btn)
 ui_manager:add_element(top_panel)
 
 return ui_manager
